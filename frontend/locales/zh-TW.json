@@ -1,0 +1,99 @@
+{
+  "common": {
+    "settings": "設定",
+    "close": "關閉",
+    "save": "儲存",
+    "cancel": "取消",
+    "submit": "提交",
+    "upload": "上傳",
+    "download": "下載",
+    "help": "說明",
+    "status": "狀態",
+    "exit": "離開",
+    "loading": "載入中...",
+    "operational": "運行正常",
+    "connected": "已連線",
+    "disconnected": "已斷線",
+    "online": "線上",
+    "offline": "離線"
+  },
+  "header": {
+    "title": "AI 資料分析師 BBS v3.14",
+    "subtitle": "智慧資料分析系統",
+    "systemTime": "系統時間",
+    "usersOnline": "線上使用者",
+    "status": "狀態"
+  },
+  "fileUpload": {
+    "title": "檔案上傳中心",
+    "dragDrop": "拖曳檔案至此處或點擊上傳",
+    "supportedFormats": "支援格式",
+    "maxSize": "最大檔案大小",
+    "selectFile": "選擇檔案",
+    "uploading": "上傳中...",
+    "uploadSuccess": "上傳成功",
+    "uploadError": "上傳失敗"
+  },
+  "reportDownload": {
+    "title": "報告下載中心",
+    "availableReports": "可用報告",
+    "downloadReport": "下載報告",
+    "noReports": "暫無可用報告",
+    "generating": "產生中...",
+    "downloadSuccess": "下載成功",
+    "downloadError": "下載失敗"
+  },
+  "debateChat": {
+    "title": "AI 辯論聊天室",
+    "enterMessage": "輸入訊息...",
+    "send": "傳送",
+    "aiThinking": "AI 思考中...",
+    "noMessages": "暫無訊息",
+    "clearChat": "清空聊天"
+  },
+  "llmStatus": {
+    "title": "LLM 連線狀態",
+    "openai": "OpenAI GPT-4",
+    "claude": "Anthropic Claude",
+    "gemini": "Google Gemini",
+    "local": "本地模型",
+    "connected": "已連線",
+    "disconnected": "未連線",
+    "testing": "測試中",
+    "error": "錯誤"
+  },
+  "systemMonitor": {
+    "title": "系統監控 v2.1",
+    "realTimeMetrics": "即時系統指標",
+    "cpuUsage": "CPU 使用率",
+    "memory": "記憶體",
+    "diskIO": "磁碟 I/O",
+    "connections": "連線數",
+    "messagesPerSecond": "訊息/秒",
+    "networkTraffic": "網路流量",
+    "lastUpdate": "最後更新",
+    "allSystemsOperational": "所有系統運行正常"
+  },
+  "inputArea": {
+    "title": "多功能輸入區域",
+    "modeDebatePrep": "辯論前需求輸入",
+    "modeReportReview": "報告後點評",
+    "switchMode": "切換模式",
+    "placeholder": {
+      "debatePrep": "請輸入您的辯論需求和參數...",
+      "reportReview": "請輸入您對報告的點評或下輪辯論要求..."
+    },
+    "submit": "提交",
+    "clear": "清空"
+  },
+  "footer": {
+    "help": "F1-說明",
+    "upload": "F2-上傳",
+    "chat": "F3-聊天",
+    "status": "F4-狀態",
+    "settings": "CTRL+,-設定",
+    "exit": "F10-離開",
+    "connectedTo": "連線至",
+    "font": "字型"
+  }
+}

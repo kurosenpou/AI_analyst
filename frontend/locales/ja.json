@@ -1,0 +1,99 @@
+{
+  "common": {
+    "settings": "設定",
+    "close": "閉じる",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "submit": "送信",
+    "upload": "アップロード",
+    "download": "ダウンロード",
+    "help": "ヘルプ",
+    "status": "ステータス",
+    "exit": "終了",
+    "loading": "読み込み中...",
+    "operational": "正常動作中",
+    "connected": "接続済み",
+    "disconnected": "切断済み",
+    "online": "オンライン",
+    "offline": "オフライン"
+  },
+  "header": {
+    "title": "AI データアナリスト BBS v3.14",
+    "subtitle": "インテリジェントデータ分析システム",
+    "systemTime": "システム時刻",
+    "usersOnline": "オンラインユーザー",
+    "status": "ステータス"
+  },
+  "fileUpload": {
+    "title": "ファイルアップロードセンター",
+    "dragDrop": "ファイルをここにドラッグ＆ドロップまたはクリックしてアップロード",
+    "supportedFormats": "対応フォーマット",
+    "maxSize": "最大ファイルサイズ",
+    "selectFile": "ファイル選択",
+    "uploading": "アップロード中...",
+    "uploadSuccess": "アップロード成功",
+    "uploadError": "アップロード失敗"
+  },
+  "reportDownload": {
+    "title": "レポートダウンロードセンター",
+    "availableReports": "利用可能なレポート",
+    "downloadReport": "レポートダウンロード",
+    "noReports": "利用可能なレポートがありません",
+    "generating": "生成中...",
+    "downloadSuccess": "ダウンロード成功",
+    "downloadError": "ダウンロード失敗"
+  },
+  "debateChat": {
+    "title": "AI ディベートチャットルーム",
+    "enterMessage": "メッセージを入力...",
+    "send": "送信",
+    "aiThinking": "AI が考え中...",
+    "noMessages": "メッセージがありません",
+    "clearChat": "チャットをクリア"
+  },
+  "llmStatus": {
+    "title": "LLM 接続ステータス",
+    "openai": "OpenAI GPT-4",
+    "claude": "Anthropic Claude",
+    "gemini": "Google Gemini",
+    "local": "ローカルモデル",
+    "connected": "接続済み",
+    "disconnected": "未接続",
+    "testing": "テスト中",
+    "error": "エラー"
+  },
+  "systemMonitor": {
+    "title": "システムモニター v2.1",
+    "realTimeMetrics": "リアルタイムシステムメトリクス",
+    "cpuUsage": "CPU 使用率",
+    "memory": "メモリ",
+    "diskIO": "ディスク I/O",
+    "connections": "接続数",
+    "messagesPerSecond": "メッセージ/秒",
+    "networkTraffic": "ネットワークトラフィック",
+    "lastUpdate": "最終更新",
+    "allSystemsOperational": "全システム正常動作中"
+  },
+  "inputArea": {
+    "title": "多機能入力エリア",
+    "modeDebatePrep": "ディベート前要件入力",
+    "modeReportReview": "レポート後レビュー",
+    "switchMode": "モード切替",
+    "placeholder": {
+      "debatePrep": "ディベートの要件とパラメータを入力してください...",
+      "reportReview": "レポートのレビューまたは次回ディベートの要件を入力してください..."
+    },
+    "submit": "送信",
+    "clear": "クリア"
+  },
+  "footer": {
+    "help": "F1-ヘルプ",
+    "upload": "F2-アップロード",
+    "chat": "F3-チャット",
+    "status": "F4-ステータス",
+    "settings": "CTRL+,-設定",
+    "exit": "F10-終了",
+    "connectedTo": "接続先",
+    "font": "フォント"
+  }
+}

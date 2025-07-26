@@ -1,0 +1,118 @@
+{
+  "common": {
+    "settings": "Settings",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "upload": "Upload",
+    "download": "Download",
+    "help": "Help",
+    "status": "Status",
+    "exit": "Exit",
+    "loading": "Loading...",
+    "operational": "Operational",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "online": "Online",
+    "offline": "Offline",
+    "uptime": "Uptime",
+    "users": "Users",
+    "shortcuts": "Shortcuts"
+  },
+  "header": {
+    "title": "AI DATA ANALYST BBS v3.14",
+    "subtitle": "INTELLIGENT DATA ANALYSIS SYSTEM",
+    "systemTime": "SYSTEM TIME",
+    "usersOnline": "USERS ONLINE",
+    "status": "STATUS"
+  },
+  "fileUpload": {
+    "title": "Upload",
+    "dragDrop": "Drag files here or click to select",
+    "supportedFormats": "Supported Formats",
+    "maxSize": "Max File Size",
+    "selectFile": "Select File",
+    "uploading": "Uploading",
+    "uploadSuccess": "Upload Successful",
+    "uploadError": "Upload Failed",
+    "uploadBtn": "Upload File"
+  },
+  "input": {
+    "title": "Input",
+    "placeholder": "Enter your question or command...",
+    "submit": "Submit"
+  },
+  "debate": {
+    "title": "AI Debate Broadcast",
+    "sampleMessage1": "I believe this data analysis shows a clear trend...",
+    "sampleMessage2": "However, we need to consider the issue of sample bias...",
+    "sampleMessage3": "From a statistical perspective, this conclusion needs more evidence..."
+  },
+  "reportDownload": {
+    "title": "Download",
+    "availableReports": "Available Reports",
+    "downloadReport": "Download",
+    "noReports": "No Reports Available",
+    "generating": "Generating",
+    "downloadSuccess": "Download Successful",
+    "downloadError": "Download Failed",
+    "completed": "Completed",
+    "dragDrop": "Drag files here"
+  },
+  "debateChat": {
+    "title": "AI DEBATE CHAT ROOM",
+    "enterMessage": "Enter message...",
+    "send": "Send",
+    "aiThinking": "AI is thinking...",
+    "noMessages": "No messages yet",
+    "clearChat": "Clear Chat"
+  },
+  "llmStatus": {
+    "title": "LLM CONNECTION STATUS",
+    "openai": "OpenAI GPT-4",
+    "claude": "Anthropic Claude",
+    "gemini": "Google Gemini",
+    "local": "Local Model",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "testing": "Testing",
+    "error": "Error",
+    "currentRole": "Current Role",
+    "moderator": "Moderator"
+  },
+  "systemMonitor": {
+    "title": "SYSTEM MONITOR v2.1",
+    "realTimeMetrics": "REAL-TIME SYSTEM METRICS",
+    "cpuUsage": "CPU USAGE",
+    "memory": "MEMORY",
+    "diskIO": "DISK I/O",
+    "connections": "CONNECTIONS",
+    "messagesPerSecond": "MSG/SEC",
+    "networkTraffic": "NET TRAFFIC",
+    "lastUpdate": "LAST UPDATE",
+    "allSystemsOperational": "ALL SYSTEMS OPERATIONAL"
+  },
+  "inputArea": {
+    "title": "MULTI-FUNCTION INPUT AREA",
+    "modeDebatePrep": "Pre-Debate Requirements",
+    "modeReportReview": "Post-Report Review",
+    "switchMode": "Switch Mode",
+    "placeholder": {
+      "debatePrep": "Enter your debate requirements and parameters...",
+      "reportReview": "Enter your report review or next round debate requirements..."
+    },
+    "submit": "Submit",
+    "clear": "Clear"
+  },
+  "footer": {
+    "help": "F1-HELP",
+    "upload": "F2-UPLOAD",
+    "chat": "F3-CHAT",
+    "status": "F4-STATUS",
+    "settings": "CTRL+,-SETTINGS",
+    "exit": "F10-EXIT",
+    "connectedTo": "CONNECTED TO",
+    "font": "FONT"
+  }
+}
