@@ -6,6 +6,47 @@
 
 /* CSS Variables for Design System */
 :root {
+  /* BBS 復古顏色變量 */
+  --color-terminal-green: #00ff00;
+  --color-terminal-amber: #ffbf00;
+  --color-terminal-cyan: #00ffff;
+  --color-terminal-magenta: #ff00ff;
+  --color-terminal-yellow: #ffff00;
+  --color-terminal-red: #ff0000;
+  --color-terminal-blue: #0080ff;
+  --color-terminal-white: #ffffff;
+  --color-terminal-gray: #808080;
+  
+  /* Dynamic Font Size */
+  --bbs-font-size: 14px;
+  
+  /* BBS 背景顏色 */
+  --bg-terminal: #000000;
+  --bg-terminal-dark: #001100;
+  --bg-terminal-header: #00ff00;
+  --bg-terminal-border: #004400;
+  
+  /* BBS 文字顏色 */
+  --text-terminal-primary: #00ff00;
+  --text-terminal-secondary: #00cc00;
+  --text-terminal-accent: #ffff00;
+  --text-terminal-info: #00ffff;
+  --text-terminal-warning: #ffbf00;
+  --text-terminal-error: #ff0000;
+  
+  /* 復古字體 */
+  --font-terminal: 'Courier New', 'Monaco', 'Menlo', 'Consolas', monospace;
+  --font-bbs: 'MS Gothic', 'Courier New', monospace;
+  
+  /* BBS 邊框樣式 */
+  --border-terminal: 1px solid #00ff00;
+  --border-terminal-thick: 2px solid #00ff00;
+  --border-ascii: 1px solid #004400;
+  
+  /* 終端動畫 */
+  --blink-speed: 1s;
+  --scan-line-speed: 2s;
+  
   /* Colors */
   --color-bg-primary: #0a0a0a;
   --color-bg-secondary: #1a1a1a;
@@ -106,7 +147,45 @@
   }
 }
 
-/* Keyframes */
+/* Global BBS Font Size Application */
+body, .bbs-interface, .bbs-interface * {
+  font-size: var(--bbs-font-size) !important;
+}
+
+/* Override for specific elements that need relative sizing */
+.bbs-interface .text-xs { font-size: calc(var(--bbs-font-size) * 0.75) !important; }
+.bbs-interface .text-sm { font-size: calc(var(--bbs-font-size) * 0.875) !important; }
+.bbs-interface .text-base { font-size: var(--bbs-font-size) !important; }
+.bbs-interface .text-lg { font-size: calc(var(--bbs-font-size) * 1.125) !important; }
+.bbs-interface .text-xl { font-size: calc(var(--bbs-font-size) * 1.25) !important; }
+.bbs-interface .text-2xl { font-size: calc(var(--bbs-font-size) * 1.5) !important; }
+.bbs-interface .text-3xl { font-size: calc(var(--bbs-font-size) * 1.875) !important; }
+
+/* BBS 復古動畫效果 */
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -139,66 +218,121 @@
   100% { left: 100%; }
 }
 
-/* Global Styles */
+/* BBS 全局樣式 */
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: var(--font-family-mono);
-  background-color: var(--color-bg-primary);
-  color: var(--color-text-primary);
+  font-family: var(--font-terminal);
+  background-color: var(--bg-terminal);
+  color: var(--text-terminal-primary);
   overflow: hidden;
   font-size: var(--font-size-sm);
-  line-height: 1.5;
+  line-height: 1.2;
+  cursor: default;
 }
 
 * {
   box-sizing: border-box;
 }
 
-/* Improved scrollbar */
+/* BBS 終端滾動條 */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 12px;
+  height: 12px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-bg-secondary);
-  border-radius: var(--border-radius-sm);
+  background: var(--bg-terminal-dark);
+  border: 1px solid var(--color-terminal-green);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-bg-tertiary);
-  border-radius: var(--border-radius-sm);
+  background: var(--color-terminal-green);
+  border: 1px solid var(--bg-terminal);
   transition: background var(--transition-fast);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #404040;
+  background: var(--color-terminal-amber);
 }
 
-/* Terminal styles */
+::-webkit-scrollbar-corner {
+  background: var(--bg-terminal-dark);
+}
+
+/* BBS 終端樣式 */
 .terminal-container {
-  background: linear-gradient(135deg, var(--color-bg-primary) 0%, #0d0d0d 100%);
-  color: var(--color-text-primary);
+  background: var(--bg-terminal);
+  color: var(--text-terminal-primary);
   height: 100vh;
   width: 100vw;
   padding: var(--spacing-lg);
-  font-family: var(--font-family-mono);
+  font-family: var(--font-terminal);
   font-size: var(--font-size-sm);
-  line-height: 1.6;
+  line-height: 1.2;
   position: relative;
   overflow: hidden;
+  border: var(--border-terminal);
 }
 
 .terminal-header {
-  color: var(--color-accent-primary);
+  background: var(--bg-terminal-header);
+  color: var(--bg-terminal);
   margin-bottom: var(--spacing-lg);
   font-size: var(--font-size-lg);
-  font-weight: 600;
-  text-shadow: 0 0 10px rgba(0, 212, 170, 0.3);
-  border-bottom: 1px solid var(--color-bg-tertiary);
-  padding-bottom: var(--spacing-sm);
+  font-weight: bold;
+  padding: 4px 8px;
+  text-align: center;
+  border-bottom: var(--border-terminal);
+}
+
+/* BBS 特效 */
+.blink {
+  animation: blink var(--blink-speed) infinite;
+}
+
+.scanline::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-terminal-green), transparent);
+  animation: scanline var(--scan-line-speed) linear infinite;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* ASCII 藝術支持 */
+.ascii-art {
+  font-family: var(--font-terminal);
+  white-space: pre;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+/* BBS 按鈕樣式 */
+.bbs-button {
+  background: var(--bg-terminal);
+  color: var(--text-terminal-primary);
+  border: var(--border-terminal);
+  padding: 4px 8px;
+  font-family: var(--font-terminal);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.bbs-button:hover {
+  background: var(--text-terminal-primary);
+  color: var(--bg-terminal);
+}
+
+.bbs-button:active {
+  background: var(--color-terminal-amber);
+  color: var(--bg-terminal);
 }
 
 .terminal-prompt {
@@ -778,4 +912,75 @@ body {
   .report-content h2 {
     font-size: var(--font-size-base);
   }
+}
+
+/* Font Size Slider Styles */
+.font-size-slider {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-bg-tertiary);
+  outline: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.font-size-slider:hover {
+  opacity: 1;
+}
+
+.font-size-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-accent-primary);
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 212, 170, 0.3);
+  transition: all 0.2s;
+}
+
+.font-size-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(0, 212, 170, 0.5);
+}
+
+.font-size-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-accent-primary);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 10px rgba(0, 212, 170, 0.3);
+  transition: all 0.2s;
+}
+
+.font-size-slider::-moz-range-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(0, 212, 170, 0.5);
+}
+
+.font-size-control {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.font-size-label {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  min-width: 80px;
+}
+
+.font-size-value {
+  color: var(--color-accent-primary);
+  font-size: var(--font-size-xs);
+  min-width: 40px;
+  text-align: right;
+  font-weight: 600;
 }
