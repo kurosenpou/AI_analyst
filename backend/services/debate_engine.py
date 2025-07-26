@@ -24,6 +24,12 @@ from .model_rotation import get_rotation_engine, ModelRotationEngine, RotationDe
 from .debate_quality import get_quality_assessor, DebateQualityAssessor, DebateRole
 from .adaptive_rounds import get_round_manager, AdaptiveRoundManager, RoundDecision
 
+# Task 2.3 Imports
+from .deep_debate import get_deep_debate_engine, DeepDebateEngine
+from .argument_analysis import get_argument_analysis_engine, ArgumentAnalysisEngine
+from .consensus_builder import get_consensus_engine, ConsensusEngine
+from .advanced_judge import get_advanced_judge_engine, AdvancedJudgeEngine
+
 logger = logging.getLogger(__name__)
 
 
@@ -163,7 +169,13 @@ class DebateEngine:
         self.quality_assessor = get_quality_assessor()
         self.round_manager = get_round_manager()
         
-        logger.info("Enhanced debate engine initialized with Task 2.2 features")
+        # Task 2.3 Components
+        self.deep_debate_engine = get_deep_debate_engine()
+        self.argument_analysis_engine = get_argument_analysis_engine()
+        self.consensus_engine = get_consensus_engine()
+        self.advanced_judge_engine = get_advanced_judge_engine()
+        
+        logger.info("Enhanced debate engine initialized with Task 2.2 and Task 2.3 features")
     
     async def create_debate_session(
         self,
@@ -366,7 +378,7 @@ class DebateEngine:
         session.current_phase = DebatePhase.REBUTTAL
     
     async def _conduct_single_round(self, session: DebateSession, round_number: int):
-        """進行單輪辯論 - Enhanced with Task 2.2 features"""
+        """進行單輪辯論 - Enhanced with Task 2.2 and Task 2.3 features"""
         debate_round = DebateRound(
             round_number=round_number,
             phase=DebatePhase.FIRST_ROUND,
@@ -391,6 +403,12 @@ class DebateEngine:
         # Task 2.2: 記錄模型性能
         await self._record_model_performance(session, ModelRole.DEBATER_A, debater_a_message)
         
+        # Task 2.3: 深度辯論分析
+        await self._process_deep_debate_message(session, debater_a_message, round_number)
+        
+        # Task 2.3: 論證強度分析
+        await self._analyze_argument_strength(session, debater_a_message)
+        
         # 辯論者B回應
         debater_b_message = await self._get_model_response(
             session,
@@ -402,6 +420,12 @@ class DebateEngine:
         
         # Task 2.2: 記錄模型性能
         await self._record_model_performance(session, ModelRole.DEBATER_B, debater_b_message)
+        
+        # Task 2.3: 深度辯論分析
+        await self._process_deep_debate_message(session, debater_b_message, round_number)
+        
+        # Task 2.3: 論證強度分析
+        await self._analyze_argument_strength(session, debater_b_message)
         
         # 完成輪次
         debate_round.end_time = datetime.now()
@@ -492,11 +516,17 @@ class DebateEngine:
         })
     
     async def _finalize_debate(self, session: DebateSession):
-        """完成辯論並生成最終報告"""
+        """完成辯論並生成最終報告 - Enhanced with Task 2.3 features"""
         logger.info(f"Finalizing debate for session {session.session_id}")
         
-        # 生成最終報告
-        session.final_report = await self._generate_final_report(session)
+        # Task 2.3: 進行高級判決
+        await self._conduct_advanced_judgment(session)
+        
+        # Task 2.3: 建構共識報告
+        await self._build_consensus_report(session)
+        
+        # 生成增強的最終報告
+        session.final_report = await self._generate_enhanced_final_report(session)
         
         # 更新會話狀態
         session.status = DebateStatus.COMPLETED
@@ -506,10 +536,11 @@ class DebateEngine:
         record_metric("debate_sessions_completed", 1, {
             "session_id": session.session_id[:8],
             "total_rounds": str(len(session.rounds)),
-            "duration": str(int(session.duration or 0))
+            "duration": str(int(session.duration or 0)),
+            "advanced_features_used": "true"
         })
         
-        logger.info(f"Debate session {session.session_id} completed successfully")
+        logger.info(f"Debate session {session.session_id} completed successfully with advanced analysis")
     
     async def _get_model_response(
         self,
@@ -714,6 +745,121 @@ class DebateEngine:
         report_sections.append(f"- 總Token數：{session.total_tokens}")
         report_sections.append(f"- 估計成本：${session.total_cost:.4f}")
         report_sections.append(f"- 錯誤次數：{session.error_count}")
+        
+        return "\n".join(report_sections)
+    
+    async def _generate_enhanced_final_report(self, session: DebateSession) -> str:
+        """生成增強的最終辯論報告 - 包含Task 2.3功能"""
+        report_sections = []
+        
+        # 基本辯論摘要
+        report_sections.append(f"# 增強辯論報告：{session.topic}")
+        report_sections.append(f"**創建時間：** {session.created_at.strftime('%Y-%m-%d %H:%M:%S')}")
+        report_sections.append(f"**辯論時長：** {session.duration:.1f}秒" if session.duration else "")
+        report_sections.append(f"**總輪數：** {len(session.rounds)}")
+        
+        # 參與模型
+        report_sections.append("\n## 參與模型")
+        for role, config in session.model_assignments.items():
+            report_sections.append(f"- **{role.value}：** {config.name}")
+        
+        # Task 2.3: 高級判決結果
+        advanced_judgment = session.metadata.get("advanced_judgment", {})
+        if advanced_judgment:
+            report_sections.append("\n## 高級AI判決")
+            if advanced_judgment.get("winner"):
+                report_sections.append(f"**獲勝者：** {advanced_judgment['winner']}")
+                report_sections.append(f"**獲勝優勢：** {advanced_judgment.get('winning_margin', 0):.3f}")
+            else:
+                report_sections.append("**結果：** 平局")
+            
+            report_sections.append(f"**整體質量：** {advanced_judgment.get('overall_quality', 0):.3f}")
+            report_sections.append(f"**判決信心度：** {advanced_judgment.get('judgment_confidence', 0):.3f}")
+            
+            if advanced_judgment.get("detected_biases", 0) > 0:
+                report_sections.append(f"**檢測到的偏見數量：** {advanced_judgment['detected_biases']}")
+            
+            if advanced_judgment.get("key_turning_points"):
+                report_sections.append("\n**關鍵轉折點：**")
+                for point in advanced_judgment["key_turning_points"]:
+                    report_sections.append(f"- {point}")
+        
+        # Task 2.3: 共識分析
+        consensus_report = session.metadata.get("consensus_report", {})
+        if consensus_report:
+            report_sections.append("\n## 共識分析")
+            report_sections.append(f"**整體共識水平：** {consensus_report.get('overall_consensus_level', 0):.3f}")
+            report_sections.append(f"**極化指數：** {consensus_report.get('polarization_index', 0):.3f}")
+            report_sections.append(f"**解決潛力：** {consensus_report.get('resolution_potential', 0):.3f}")
+            
+            report_sections.append(f"**發現的共同點：** {consensus_report.get('common_grounds_count', 0)}個")
+            report_sections.append(f"**主要分歧：** {consensus_report.get('disagreements_count', 0)}個")
+            report_sections.append(f"**提出的解決方案：** {consensus_report.get('solutions_count', 0)}個")
+            
+            if consensus_report.get("next_steps"):
+                report_sections.append("\n**建議的下一步：**")
+                for step in consensus_report["next_steps"]:
+                    report_sections.append(f"- {step}")
+        
+        # 辯論過程（包含論證強度分析）
+        report_sections.append("\n## 辯論過程與論證分析")
+        for round in session.rounds:
+            report_sections.append(f"\n### 第{round.round_number}輪")
+            for msg in round.messages:
+                speaker_name = {
+                    ModelRole.DEBATER_A: "正方",
+                    ModelRole.DEBATER_B: "反方"
+                }.get(msg.speaker, msg.speaker.value)
+                
+                report_sections.append(f"\n**{speaker_name}：**")
+                report_sections.append(msg.content)
+                
+                # Task 2.3: 添加論證強度分析
+                strength_analysis = msg.metadata.get("strength_analysis", {})
+                if strength_analysis:
+                    report_sections.append(f"\n*論證分析：*")
+                    report_sections.append(f"- 整體強度：{strength_analysis.get('overall_strength', 0):.3f}")
+                    report_sections.append(f"- 邏輯健全性：{strength_analysis.get('logical_soundness', 0):.3f}")
+                    report_sections.append(f"- 證據數量：{strength_analysis.get('evidence_count', 0)}")
+                    
+                    if strength_analysis.get("logical_fallacies"):
+                        fallacies = [f for f in strength_analysis["logical_fallacies"] if f != "none"]
+                        if fallacies:
+                            report_sections.append(f"- 邏輯謬誤：{', '.join(fallacies)}")
+                    
+                    if strength_analysis.get("improvement_suggestions"):
+                        report_sections.append("- 改進建議：")
+                        for suggestion in strength_analysis["improvement_suggestions"]:
+                            report_sections.append(f"  • {suggestion}")
+        
+        # 裁判判決
+        if session.judgment:
+            report_sections.append("\n## 基礎裁判判決")
+            report_sections.append(session.judgment.content)
+        
+        # Task 2.3: 深度辯論洞察
+        deep_analysis = self.deep_debate_engine.get_debate_analysis()
+        if deep_analysis and "error" not in deep_analysis:
+            report_sections.append("\n## 深度辯論洞察")
+            report_sections.append(f"**總論證數：** {deep_analysis.get('total_arguments', 0)}")
+            report_sections.append(f"**論證鏈數：** {deep_analysis.get('total_chains', 0)}")
+            report_sections.append(f"**識別議題數：** {deep_analysis.get('total_issues', 0)}")
+            
+            if deep_analysis.get("emerging_themes"):
+                report_sections.append("\n**新興主題：**")
+                for theme in deep_analysis["emerging_themes"]:
+                    report_sections.append(f"- {theme}")
+        
+        # 統計信息
+        report_sections.append("\n## 統計信息")
+        report_sections.append(f"- 總Token數：{session.total_tokens}")
+        report_sections.append(f"- 估計成本：${session.total_cost:.4f}")
+        report_sections.append(f"- 錯誤次數：{session.error_count}")
+        
+        # Task 2.3功能使用統計
+        report_sections.append(f"- 使用高級分析功能：是")
+        if advanced_judgment:
+            report_sections.append(f"- 高級判決評估時間：{advanced_judgment.get('evaluation_time', 0):.2f}秒")
         
         return "\n".join(report_sections)
     
@@ -953,6 +1099,272 @@ class DebateEngine:
             return self.round_manager.get_adjustment_summary()
         except Exception as e:
             logger.error(f"Error getting round adjustment summary: {e}")
+            return {"error": str(e)}
+    
+    # ===== Task 2.3 Enhanced Methods =====
+    
+    async def _process_deep_debate_message(
+        self,
+        session: DebateSession,
+        message: DebateMessage,
+        round_number: int
+    ):
+        """處理深度辯論消息"""
+        try:
+            # 構建消息上下文
+            message_context = {
+                "session_id": session.session_id,
+                "topic": session.topic,
+                "phase": message.phase.value,
+                "round": round_number
+            }
+            
+            # 處理深度辯論分析
+            analysis_result = await self.deep_debate_engine.process_debate_message(
+                content=message.content,
+                speaker=message.speaker.value,
+                round_number=round_number,
+                message_context=message_context
+            )
+            
+            # 將分析結果存儲到消息元數據中
+            if "error" not in analysis_result:
+                message.metadata.update({
+                    "deep_analysis": analysis_result,
+                    "argument_chain_info": analysis_result.get("chain_info", {}),
+                    "context_insights": analysis_result.get("context_snapshot", {})
+                })
+            
+        except Exception as e:
+            logger.error(f"Error processing deep debate message: {e}")
+    
+    async def _analyze_argument_strength(
+        self,
+        session: DebateSession,
+        message: DebateMessage
+    ):
+        """分析論證強度"""
+        try:
+            # 進行論證強度分析
+            strength_report = await self.argument_analysis_engine.analyze_argument(
+                argument_id=message.id,
+                content=message.content,
+                speaker=message.speaker.value,
+                timestamp=message.timestamp
+            )
+            
+            # 將分析結果存儲到消息元數據中
+            message.metadata.update({
+                "strength_analysis": {
+                    "overall_strength": strength_report.overall_strength,
+                    "confidence_level": strength_report.confidence_level,
+                    "logical_soundness": strength_report.logical_soundness_score,
+                    "evidence_count": len(strength_report.evidence_items),
+                    "logical_fallacies": [f.value for f in strength_report.logical_fallacies],
+                    "improvement_suggestions": strength_report.improvement_suggestions[:3]
+                }
+            })
+            
+        except Exception as e:
+            logger.error(f"Error analyzing argument strength: {e}")
+    
+    async def _conduct_advanced_judgment(self, session: DebateSession):
+        """進行高級判決"""
+        try:
+            # 準備參與者論證
+            participant_arguments = {}
+            for message in session.all_messages:
+                if message.speaker in [ModelRole.DEBATER_A, ModelRole.DEBATER_B]:
+                    speaker_name = message.speaker.value
+                    if speaker_name not in participant_arguments:
+                        participant_arguments[speaker_name] = []
+                    participant_arguments[speaker_name].append(message.content)
+            
+            # 構建辯論內容
+            debate_content = self._format_debate_history(session.all_messages)
+            
+            # 構建上下文
+            context = {
+                "session_id": session.session_id,
+                "topic": session.topic,
+                "total_rounds": len(session.rounds),
+                "debate_duration": session.duration,
+                "phase": session.current_phase.value
+            }
+            
+            # 進行高級判決
+            advanced_judgment = await self.advanced_judge_engine.conduct_advanced_judgment(
+                debate_id=session.session_id,
+                topic=session.topic,
+                participants=list(participant_arguments.keys()),
+                debate_content=debate_content,
+                participant_arguments=participant_arguments,
+                context=context
+            )
+            
+            # 將高級判決結果存儲到會話元數據中
+            session.metadata.update({
+                "advanced_judgment": {
+                    "judgment_id": advanced_judgment.judgment_id,
+                    "winner": advanced_judgment.winner,
+                    "winning_margin": advanced_judgment.winning_margin,
+                    "overall_quality": advanced_judgment.overall_quality,
+                    "judgment_confidence": advanced_judgment.judgment_confidence,
+                    "detected_biases": len(advanced_judgment.detected_biases),
+                    "key_turning_points": advanced_judgment.key_turning_points[:3],
+                    "evaluation_time": advanced_judgment.evaluation_time
+                }
+            })
+            
+            return advanced_judgment
+            
+        except Exception as e:
+            logger.error(f"Error conducting advanced judgment: {e}")
+            return None
+    
+    async def _build_consensus_report(self, session: DebateSession):
+        """建構共識報告"""
+        try:
+            # 準備論證數據
+            arguments = []
+            participants = []
+            
+            for message in session.all_messages:
+                if message.speaker in [ModelRole.DEBATER_A, ModelRole.DEBATER_B]:
+                    speaker_name = message.speaker.value
+                    if speaker_name not in participants:
+                        participants.append(speaker_name)
+                    
+                    arguments.append({
+                        "content": message.content,
+                        "speaker": speaker_name,
+                        "timestamp": message.timestamp.isoformat(),
+                        "round": getattr(message, 'round_number', 0)
+                    })
+            
+            # 構建上下文
+            context = {
+                "session_id": session.session_id,
+                "debate_duration": session.duration,
+                "total_rounds": len(session.rounds)
+            }
+            
+            # 建構共識
+            consensus_report = await self.consensus_engine.build_consensus(
+                debate_id=session.session_id,
+                topic=session.topic,
+                participants=participants,
+                arguments=arguments,
+                context=context
+            )
+            
+            # 將共識報告存儲到會話元數據中
+            session.metadata.update({
+                "consensus_report": {
+                    "overall_consensus_level": consensus_report.overall_consensus_level,
+                    "polarization_index": consensus_report.polarization_index,
+                    "resolution_potential": consensus_report.resolution_potential,
+                    "common_grounds_count": len(consensus_report.common_grounds),
+                    "disagreements_count": len(consensus_report.disagreements),
+                    "solutions_count": len(consensus_report.solutions),
+                    "next_steps": consensus_report.next_steps[:3]
+                }
+            })
+            
+            return consensus_report
+            
+        except Exception as e:
+            logger.error(f"Error building consensus report: {e}")
+            return None
+    
+    async def get_deep_debate_analysis(self, session_id: str) -> Dict[str, Any]:
+        """獲取深度辯論分析"""
+        try:
+            session = self.get_session(session_id)
+            if not session:
+                return {"error": "Session not found"}
+            
+            # 獲取深度辯論分析
+            analysis = self.deep_debate_engine.get_debate_analysis()
+            
+            return {
+                "session_id": session_id,
+                "analysis": analysis,
+                "generated_at": datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            logger.error(f"Error getting deep debate analysis: {e}")
+            return {"error": str(e)}
+    
+    async def get_argument_strength_comparison(self, session_id: str) -> Dict[str, Any]:
+        """獲取論證強度比較"""
+        try:
+            session = self.get_session(session_id)
+            if not session:
+                return {"error": "Session not found"}
+            
+            # 收集所有論證ID
+            argument_ids = [msg.id for msg in session.all_messages
+                          if msg.speaker in [ModelRole.DEBATER_A, ModelRole.DEBATER_B]]
+            
+            # 獲取論證比較
+            comparison = await self.argument_analysis_engine.compare_arguments(argument_ids)
+            
+            return {
+                "session_id": session_id,
+                "comparison": comparison,
+                "generated_at": datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            logger.error(f"Error getting argument strength comparison: {e}")
+            return {"error": str(e)}
+    
+    async def get_consensus_insights(self, session_id: str) -> Dict[str, Any]:
+        """獲取共識洞察"""
+        try:
+            session = self.get_session(session_id)
+            if not session:
+                return {"error": "Session not found"}
+            
+            # 建構共識報告（如果還沒有）
+            if "consensus_report" not in session.metadata:
+                await self._build_consensus_report(session)
+            
+            consensus_data = session.metadata.get("consensus_report", {})
+            
+            return {
+                "session_id": session_id,
+                "consensus_insights": consensus_data,
+                "generated_at": datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            logger.error(f"Error getting consensus insights: {e}")
+            return {"error": str(e)}
+    
+    async def get_advanced_judgment_details(self, session_id: str) -> Dict[str, Any]:
+        """獲取高級判決詳情"""
+        try:
+            session = self.get_session(session_id)
+            if not session:
+                return {"error": "Session not found"}
+            
+            # 進行高級判決（如果還沒有）
+            if "advanced_judgment" not in session.metadata:
+                await self._conduct_advanced_judgment(session)
+            
+            judgment_data = session.metadata.get("advanced_judgment", {})
+            
+            return {
+                "session_id": session_id,
+                "advanced_judgment": judgment_data,
+                "generated_at": datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            logger.error(f"Error getting advanced judgment details: {e}")
             return {"error": str(e)}
 
 

@@ -7,6 +7,7 @@ from fastapi import APIRouter, HTTPException, BackgroundTasks, Depends
 from typing import Dict, List, Any, Optional
 from pydantic import BaseModel, Field
 import logging
+import asyncio
 from datetime import datetime
 
 from services.debate_engine import get_debate_engine, DebateSession, DebateStatus, DebatePhase
@@ -14,7 +15,7 @@ from services.model_pool import ModelRole
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/debate", tags=["debate"])
+router = APIRouter(tags=["debate"])
 
 
 # ===== Pydantic Models =====
@@ -659,3 +660,314 @@ async def reset_debate_system():
     except Exception as e:
         logger.error(f"Failed to reset debate system: {e}")
         raise HTTPException(status_code=500, detail="Failed to reset debate system")
+
+
+# ===== Task 2.3 Enhanced API Endpoints =====
+
+@router.get("/sessions/{session_id}/deep-analysis", response_model=Dict[str, Any])
+async def get_deep_debate_analysis(session_id: str):
+    """
+    獲取深度辯論分析
+    
+    提供詳細的深度辯論分析，包括：
+    - 論證鏈追蹤
+    - 上下文演進
+    - 議題識別
+    - 新興主題
+    """
+    try:
+        engine = get_debate_engine()
+        analysis = await engine.get_deep_debate_analysis(session_id)
+        
+        if "error" in analysis:
+            raise HTTPException(status_code=404, detail=analysis["error"])
+        
+        return analysis
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to get deep debate analysis for session {session_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get deep debate analysis")
+
+
+@router.get("/sessions/{session_id}/argument-strength", response_model=Dict[str, Any])
+async def get_argument_strength_analysis(session_id: str):
+    """
+    獲取論證強度分析
+    
+    提供詳細的論證強度分析，包括：
+    - 論證結構分析
+    - 證據質量評估
+    - 邏輯謬誤檢測
+    - 強度比較
+    """
+    try:
+        engine = get_debate_engine()
+        analysis = await engine.get_argument_strength_comparison(session_id)
+        
+        if "error" in analysis:
+            raise HTTPException(status_code=404, detail=analysis["error"])
+        
+        return analysis
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to get argument strength analysis for session {session_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get argument strength analysis")
+
+
+@router.get("/sessions/{session_id}/consensus", response_model=Dict[str, Any])
+async def get_consensus_analysis(session_id: str):
+    """
+    獲取共識分析
+    
+    提供詳細的共識分析，包括：
+    - 共同點識別
+    - 分歧分析
+    - 解決方案建議
+    - 共識水平評估
+    """
+    try:
+        engine = get_debate_engine()
+        analysis = await engine.get_consensus_insights(session_id)
+        
+        if "error" in analysis:
+            raise HTTPException(status_code=404, detail=analysis["error"])
+        
+        return analysis
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to get consensus analysis for session {session_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get consensus analysis")
+
+
+@router.get("/sessions/{session_id}/advanced-judgment", response_model=Dict[str, Any])
+async def get_advanced_judgment(session_id: str):
+    """
+    獲取高級AI判決
+    
+    提供詳細的高級判決分析，包括：
+    - 多視角評估
+    - 動態評分
+    - 偏見檢測
+    - 專業化評估
+    """
+    try:
+        engine = get_debate_engine()
+        judgment = await engine.get_advanced_judgment_details(session_id)
+        
+        if "error" in judgment:
+            raise HTTPException(status_code=404, detail=judgment["error"])
+        
+        return judgment
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to get advanced judgment for session {session_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get advanced judgment")
+
+
+@router.get("/sessions/{session_id}/comprehensive-insights", response_model=Dict[str, Any])
+async def get_comprehensive_insights(session_id: str):
+    """
+    獲取綜合洞察
+    
+    提供所有Task 2.3功能的綜合分析結果
+    """
+    try:
+        engine = get_debate_engine()
+        
+        # 並行獲取所有分析結果
+        deep_analysis_task = engine.get_deep_debate_analysis(session_id)
+        strength_analysis_task = engine.get_argument_strength_comparison(session_id)
+        consensus_analysis_task = engine.get_consensus_insights(session_id)
+        judgment_task = engine.get_advanced_judgment_details(session_id)
+        
+        # 等待所有任務完成
+        deep_analysis, strength_analysis, consensus_analysis, judgment = await asyncio.gather(
+            deep_analysis_task,
+            strength_analysis_task,
+            consensus_analysis_task,
+            judgment_task,
+            return_exceptions=True
+        )
+        
+        # 構建綜合結果
+        comprehensive_insights = {
+            "session_id": session_id,
+            "generated_at": datetime.now().isoformat(),
+            "deep_debate_analysis": deep_analysis if not isinstance(deep_analysis, Exception) else {"error": str(deep_analysis)},
+            "argument_strength_analysis": strength_analysis if not isinstance(strength_analysis, Exception) else {"error": str(strength_analysis)},
+            "consensus_analysis": consensus_analysis if not isinstance(consensus_analysis, Exception) else {"error": str(consensus_analysis)},
+            "advanced_judgment": judgment if not isinstance(judgment, Exception) else {"error": str(judgment)}
+        }
+        
+        return comprehensive_insights
+        
+    except Exception as e:
+        logger.error(f"Failed to get comprehensive insights for session {session_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get comprehensive insights")
+
+
+# ===== Task 2.3 System Analytics Endpoints =====
+
+@router.get("/analytics/deep-debate-summary", response_model=Dict[str, Any])
+async def get_deep_debate_summary():
+    """
+    獲取深度辯論系統摘要
+    
+    提供深度辯論引擎的整體統計和分析
+    """
+    try:
+        from services.deep_debate import get_deep_debate_engine
+        
+        engine = get_deep_debate_engine()
+        summary = engine.get_debate_analysis()
+        
+        return {
+            "timestamp": datetime.now().isoformat(),
+            "deep_debate_summary": summary
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get deep debate summary: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get deep debate summary")
+
+
+@router.get("/analytics/argument-analysis-summary", response_model=Dict[str, Any])
+async def get_argument_analysis_summary():
+    """
+    獲取論證分析系統摘要
+    
+    提供論證分析引擎的整體統計和分析
+    """
+    try:
+        from services.argument_analysis import get_argument_analysis_engine
+        
+        engine = get_argument_analysis_engine()
+        summary = engine.get_analysis_summary()
+        
+        return {
+            "timestamp": datetime.now().isoformat(),
+            "argument_analysis_summary": summary
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get argument analysis summary: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get argument analysis summary")
+
+
+@router.get("/analytics/consensus-summary", response_model=Dict[str, Any])
+async def get_consensus_summary():
+    """
+    獲取共識建構系統摘要
+    
+    提供共識建構引擎的整體統計和分析
+    """
+    try:
+        from services.consensus_builder import get_consensus_engine
+        
+        engine = get_consensus_engine()
+        summary = engine.get_consensus_summary()
+        
+        return {
+            "timestamp": datetime.now().isoformat(),
+            "consensus_summary": summary
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get consensus summary: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get consensus summary")
+
+
+@router.get("/analytics/advanced-judge-summary", response_model=Dict[str, Any])
+async def get_advanced_judge_summary():
+    """
+    獲取高級裁判系統摘要
+    
+    提供高級裁判引擎的整體統計和分析
+    """
+    try:
+        from services.advanced_judge import get_advanced_judge_engine
+        
+        engine = get_advanced_judge_engine()
+        summary = engine.get_judgment_summary()
+        
+        return {
+            "timestamp": datetime.now().isoformat(),
+            "advanced_judge_summary": summary
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get advanced judge summary: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get advanced judge summary")
+
+
+@router.get("/analytics/task-2-3-overview", response_model=Dict[str, Any])
+async def get_task_2_3_overview():
+    """
+    獲取Task 2.3功能總覽
+    
+    提供所有Task 2.3功能的綜合統計和狀態
+    """
+    try:
+        from services.deep_debate import get_deep_debate_engine
+        from services.argument_analysis import get_argument_analysis_engine
+        from services.consensus_builder import get_consensus_engine
+        from services.advanced_judge import get_advanced_judge_engine
+        
+        # 獲取各個引擎的摘要
+        deep_engine = get_deep_debate_engine()
+        analysis_engine = get_argument_analysis_engine()
+        consensus_engine = get_consensus_engine()
+        judge_engine = get_advanced_judge_engine()
+        
+        # 並行獲取摘要
+        deep_summary_task = asyncio.create_task(asyncio.to_thread(deep_engine.get_debate_analysis))
+        analysis_summary_task = asyncio.create_task(asyncio.to_thread(analysis_engine.get_analysis_summary))
+        consensus_summary_task = asyncio.create_task(asyncio.to_thread(consensus_engine.get_consensus_summary))
+        judge_summary_task = asyncio.create_task(asyncio.to_thread(judge_engine.get_judgment_summary))
+        
+        deep_summary, analysis_summary, consensus_summary, judge_summary = await asyncio.gather(
+            deep_summary_task,
+            analysis_summary_task,
+            consensus_summary_task,
+            judge_summary_task,
+            return_exceptions=True
+        )
+        
+        overview = {
+            "timestamp": datetime.now().isoformat(),
+            "task_2_3_status": "active",
+            "features": {
+                "deep_debate_system": {
+                    "status": "operational",
+                    "summary": deep_summary if not isinstance(deep_summary, Exception) else {"error": str(deep_summary)}
+                },
+                "argument_analysis_system": {
+                    "status": "operational",
+                    "summary": analysis_summary if not isinstance(analysis_summary, Exception) else {"error": str(analysis_summary)}
+                },
+                "consensus_building_mechanism": {
+                    "status": "operational",
+                    "summary": consensus_summary if not isinstance(consensus_summary, Exception) else {"error": str(consensus_summary)}
+                },
+                "advanced_judge_system": {
+                    "status": "operational",
+                    "summary": judge_summary if not isinstance(judge_summary, Exception) else {"error": str(judge_summary)}
+                }
+            },
+            "integration_status": "fully_integrated",
+            "api_endpoints_available": 9
+        }
+        
+        return overview
+        
+    except Exception as e:
+        logger.error(f"Failed to get Task 2.3 overview: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get Task 2.3 overview")

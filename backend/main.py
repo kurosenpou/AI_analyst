@@ -11,8 +11,9 @@ import os
 import logging
 from contextlib import asynccontextmanager
 
-from routers import openrouter, model_pool, fault_tolerance, debate
+from routers import fault_tolerance, debate, generate, upload, model_management
 from services.monitoring import get_monitoring_system, record_metric, trigger_custom_alert, AlertLevel
+from database.config import init_database, close_database
 
 # Load environment variables
 load_dotenv()
@@ -30,6 +31,20 @@ async def lifespan(app: FastAPI):
     """Application lifespan manager"""
     # Startup
     logger.info("Starting AI Business Agent MVP with fault tolerance")
+    
+    # Initialize database
+    try:
+        await init_database()
+        logger.info("Database initialized successfully")
+    except Exception as e:
+        logger.error(f"Database initialization failed: {e}")
+        trigger_custom_alert(
+            title="Database Initialization Failed",
+            message=f"Failed to initialize SQLite database: {str(e)}",
+            level=AlertLevel.ERROR,
+            source="startup"
+        )
+        raise
     
     # Initialize monitoring system (already initialized globally)
     monitoring = get_monitoring_system()
@@ -54,6 +69,14 @@ async def lifespan(app: FastAPI):
     
     # Shutdown
     logger.info("Shutting down AI Business Agent MVP")
+    
+    # Close database connections
+    try:
+        await close_database()
+        logger.info("Database connections closed")
+    except Exception as e:
+        logger.error(f"Error closing database: {e}")
+    
     monitoring.shutdown()
 
 
@@ -149,6 +172,9 @@ async def monitoring_middleware(request: Request, call_next):
 # Include API routers
 app.include_router(fault_tolerance.router, prefix="/api/fault-tolerance", tags=["fault_tolerance"])
 app.include_router(debate.router, prefix="/api/debate", tags=["debate"])
+app.include_router(generate.router, prefix="/api/generate", tags=["generate"])
+app.include_router(upload.router, prefix="/api/upload", tags=["upload"])
+app.include_router(model_management.router, prefix="/api/models", tags=["models"])
 
 @app.get("/")
 async def root():
